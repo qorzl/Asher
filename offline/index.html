@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Asher - Offline Games</title>
+	<style>
+		:root {
+			--text: #fff;
+			--top: #1c2027;
+			--top-h: 56px;
+			--bg: #0d1117;
+			--card-bg: rgba(22, 27, 34, 0.55);
+			--card-hover: rgba(30, 36, 44, 0.75);
+			--border: rgba(255, 255, 255, .13);
+			--metal: linear-gradient(135deg, #eef1f4 0%, #b8bfc9 20%, #6d7480 40%, #d8dde3 55%, #8b93a0 70%, #f2f4f6 85%, #9aa1ab 100%);
+			--metal-flat: linear-gradient(180deg, #e8ebee 0%, #c3c9d1 45%, #9aa1ab 55%, #d0d5db 100%);
+		}
+
+		*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+		html, body {
+			height: 100%;
+			font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+			color: var(--text);
+			background: var(--bg);
+		}
+
+		#loading-screen {
+			position: fixed;
+			inset: 0;
+			z-index: 500;
+			background: #0a0d13;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: opacity .5s ease, visibility .5s ease;
+		}
+		#loading-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+
+		#loading-center { text-align: center; }
+		#loading-title {
+			font-size: 1.1rem;
+			font-weight: 800;
+			letter-spacing: .02em;
+			background: var(--metal);
+			background-size: 200% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: metalShift 3s linear infinite;
+			margin-bottom: 8px;
+		}
+
+		@keyframes metalShift {
+			0% { background-position: 0% 50%; }
+			100% { background-position: 200% 50%; }
+		}
+
+		#topbar {
+			position: fixed;
+			top: 0; left: 0; right: 0;
+			height: var(--top-h);
+			background: var(--top);
+			background-image: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 60%);
+			z-index: 30;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 0 16px;
+			border-bottom: 1px solid rgba(210, 218, 228, .45);
+			box-shadow: 0 2px 10px rgba(0,0,0,.35);
+		}
+
+		#search-wrap {
+			position: relative;
+			flex: 1;
+			max-width: 520px;
+			display: flex;
+			align-items: center;
+		}
+
+		#search-icon {
+			position: absolute;
+			left: 14px;
+			width: 15px;
+			height: 15px;
+			color: rgba(255,255,255,.35);
+			pointer-events: none;
+		}
+
+		#search {
+			width: 100%;
+			background: rgba(255,255,255,.07);
+			color: var(--text);
+			padding: 9px 34px 9px 38px;
+			font-size: 14px;
+			border-radius: 20px;
+			border: 1px solid rgba(255,255,255,.14);
+			outline: none;
+			transition: border-color .2s, background .2s, box-shadow .2s;
+		}
+		#search:focus { 
+			border-color: rgba(220,225,232,.6); 
+			background: rgba(255,255,255,.12); 
+			box-shadow: 0 0 0 3px rgba(216,221,227,.12), 0 0 14px rgba(216,221,227,.15); 
+		}
+		#search::placeholder { color: rgba(255,255,255,.35); }
+
+		#search-clear {
+			position: absolute;
+			right: 6px;
+			width: 24px; height: 24px;
+			border-radius: 50%;
+			border: none;
+			background: rgba(255,255,255,.1);
+			color: rgba(255,255,255,.6);
+			font-size: 13px;
+			cursor: pointer;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+		#search-clear:hover { background: rgba(255,255,255,.2); color: #fff; }
+		#search-wrap.has-text #search-clear { display: flex; }
+
+		#main {
+			position: fixed;
+			top: var(--top-h); left: 0; right: 0; bottom: 0;
+			overflow-y: auto;
+			background: var(--bg);
+			scrollbar-width: thin;
+			scrollbar-color: rgba(255,255,255,.15) transparent;
+			z-index: 2;
+		}
+
+		#content { padding: 24px; max-width: 1600px; margin: 0 auto; }
+
+		.section-header {
+			display: flex;
+			align-items: baseline;
+			gap: 10px;
+			margin-bottom: 14px;
+		}
+
+		.section-title {
+			font-size: 1.05rem;
+			font-weight: 800;
+			background: var(--metal);
+			background-size: 200% auto;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+
+		.section-count {
+			font-size: 12px;
+			color: rgba(255,255,255,.4);
+		}
+
+		#game-list {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+			gap: 15px;
+		}
+
+		.game-card {
+			background: var(--card-bg);
+			border: 1px solid rgba(255,255,255,.16);
+			border-radius: 8px;
+			padding: 12px;
+			text-decoration: none;
+			color: rgba(255,255,255,.95);
+			transition: all .2s;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		.game-card:hover {
+			transform: translateY(-3px);
+			border-color: rgba(220,225,232,.55);
+			background: var(--card-hover);
+		}
+
+		.game-icon {
+			font-size: 2rem;
+			margin-bottom: 8px;
+		}
+
+		.game-name {
+			font-size: 12px;
+			font-weight: 600;
+			word-break: break-word;
+			line-height: 1.3;
+		}
+
+		#no-results {
+			display: none;
+			text-align: center;
+			padding: 60px 20px;
+			color: rgba(255,255,255,.4);
+		}
+		#no-results.show { display: block; }
+	</style>
+</head>
+<body>
+	<div id="loading-screen">
+		<div id="loading-center">
+			<div id="loading-title">Asher - Loading Games...</div>
+		</div>
+	</div>
+
+	<div id="topbar">
+		<span style="font-weight: 700; font-size: 1rem;">🎮 Asher Games</span>
+		<div style="flex: 1;"></div>
+		<div id="search-wrap">
+			<svg id="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<circle cx="11" cy="11" r="8"></circle>
+				<path d="m21 21-4.35-4.35"></path>
+			</svg>
+			<input type="text" id="search" placeholder="Search games...">
+			<button id="search-clear">✕</button>
+		</div>
+	</div>
+
+	<div id="main">
+		<div id="content">
+			<div class="section-header">
+				<h2 class="section-title">All Games</h2>
+				<span class="section-count" id="game-count">0 games</span>
+			</div>
+			<div id="game-list"></div>
+			<div id="no-results">
+				<p>No games found</p>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// List of all games in the offline folder
+		const games = [
+			'1-on-1-soccer', '1-on-1-tennis', '1.12', '1.5', '1.8', '10-minutes-till-dawn', '12-mini-battles', '1v1.lol',
+			'2048-cupcakes', '2048', '3D-flight-simulator', '8-ball-classic', 'Alpha_1.2.6', 'Beta_1.3', 'Indev',
+			'agar-io-lite', 'age-of-war-2', 'age-of-war', 'ages-of-conflict', 'among-us', 'angry-birds-showdown',
+			'angry-birds-space', 'angry-birds', 'awesome-tanks-2', 'awesome-tanks', 'backrooms', 'bacon-may-die',
+			'bad-ice-cream-2', 'bad-ice-cream-3', 'bad-ice-cream', 'bad-parenting', 'bad-piggies', 'baldis-basics',
+			'baseball-bros', 'basket-bros', 'basket-random', 'basketball-legends', 'basketball-stars', 'bit-planes',
+			'bitlife', 'blocky-snakes', 'bloons-TD-2', 'bloons-TD-3', 'bloons-TD-4', 'bloons-TD-5', 'bloons-TD',
+			'bloxorz', 'blumgi-racers', 'blumgi-rocket', 'bob-the-robber-2', 'bob-the-robber-5', 'bob-the-robber',
+			'bouncy-motors', 'bow-masters', 'boxing-random', 'breaking-the-bank', 'bubble-shooter', 'candy-crush',
+			'capybara-clicker', 'car-drawing', 'car-king-arena', 'chess', 'choppy-orc', 'circloO-2', 'circloO',
+			'clash-of-vikings', 'cleanup-io', 'cluster-rush', 'cookie-clicker', 'crazy-cars', 'crazy-cattle-3D',
+			'crazy-crash-landing', 'crazy-motorcycle', 'crossy-road', 'cut-the-rope', 'dadish-2', 'dadish-3', 'dadish',
+			'death-chase', 'death-run-3D', 'demolition-derby-crash-racing', 'doodle-jump', 'draw-climber',
+			'dreadhead-parkour', 'drift-boss', 'drive-mad', 'duck-life-2', 'duck-life-3', 'duck-life-4', 'duck-life-5',
+			'duck-life', 'ducklings-io', 'eagle-ride', 'earn-to-die-2', 'earn-to-die', 'eggy-car', 'elastic-face',
+			'escape-road-2', 'escape-road', 'escaping-the-prison', 'evil-glitch', 'fancy-pants-adventure-2',
+			'fancy-pants-adventure', 'fireboy-and-watergirl-2', 'fireboy-and-watergirl-3', 'fireboy-and-watergirl-4',
+			'fireboy-and-watergirl', 'flappy-bird', 'flood-runner-2', 'flood-runner-3', 'flood-runner-4', 'fnaf-2',
+			'fnaf-3', 'fnaf-4', 'fnaf', 'football-bros', 'football-legends', 'free-rider-3', 'fruit-ninja',
+			'funny-battle-2', 'funny-battle', 'funny-mad-racing', 'funny-shooter-2', 'geometry-dash-lite',
+			'geometry-dash', 'geometry-vibes', 'get-on-top', 'getaway-shootout', 'gladi-hoppers', 'google-baseball',
+			'google-dino', 'granny-2', 'granny', 'guess-their-answer', 'hanger-2', 'happy-wheels', 'helix-jump',
+			'highway-traffic', 'hill-climb-racing-lite', 'hole-io', 'house-of-hazards', 'hover-racer-drive',
+			'idle-breakout', 'iron-snout', 'jetpack-joyride', 'johnny-trigger', 'jumping-shell', 'karate-bros',
+			'kart-bros', 'learn-to-fly-2', 'learn-to-fly-3', 'learn-to-fly-idle', 'learn-to-fly', 'level-devil',
+			'madalin-stunt-cars-2', 'melon-playground', 'merge-round-racers', 'minesweeper', 'monkey-mart',
+			'monster-tracks', 'moto-x3m-2', 'moto-x3m-3', 'moto-x3m-pool-party', 'moto-x3m-spooky-land',
+			'moto-x3m-winter', 'moto-x3m', 'noob-miner', 'opposite-day', 'ovo-2', 'ovo-3-dimensions', 'ovo',
+			'pac-man', 'papas-bakeria', 'papas-burgeria', 'papas-cheeseria', 'papas-cupcakeria', 'papas-donuteria',
+			'papas-freezeria', 'papas-hot-doggeria', 'papas-pancakeria', 'papas-pastaria', 'papas-pizzeria',
+			'papas-scooperia', 'papas-sushiria', 'papas-taco-mia', 'papas-wingeria', 'paper-io-2', 'parking-fury-2',
+			'parking-fury-3', 'parking-fury', 'picos-school', 'ping-pong-chaos', 'pixel-speedrun', 'plants-vs-zombies',
+			'plonky', 'polytrack', 'poor-bunny', 'pou', 'ragdoll-archers', 'ragdoll-hit', 'ragdoll-soccer',
+			'red-ball-4-vol-1', 'red-ball-4-vol-2', 'red-ball-4-vol-3', 'retro-bowl-college', 'retro-bowl',
+			'retro-highway', 'retro-ping-pong', 'riddle-school-2', 'riddle-school-3', 'riddle-school-4',
+			'riddle-school-5', 'riddle-school', 'riddle-transfer-2', 'riddle-transfer', 'rocket-soccer-derby',
+			'rooftop-snipers-2', 'rooftop-snipers', 'run-2', 'run-3', 'run', 'sand-game', 'short-life',
+			'slope-2-player', 'slope-3', 'slope', 'slow-roads', 'sm-63', 'sm-64', 'snow-rider', 'snow-road',
+			'snowball-io', 'soccer-bros', 'soccer-random', 'space-is-key-2', 'space-is-key', 'space-waves',
+			'spacebar-clicker', 'speed-stars', 'sprunki', 'stack', 'stacktris', 'state-io', 'stick-archers-battle',
+			'stick-fighter', 'stick-merge', 'stickman-hook', 'subway-surfers-beijing', 'subway-surfers-havana',
+			'subway-surfers-san-francisco', 'super-bike-the-champion', 'super-liquid-soccer', 'super-star-car',
+			'superhot', 'table-tennis-world-tour', 'tag', 'tap-road', 'temple-of-boom', 'temple-run-2',
+			'territorial-io', 'the-impossible-quiz-2', 'the-impossible-quiz', 'there-is-no-g', 'they-are-coming',
+			'this-is-the-only-level-too', 'this-is-the-only-level', 'time-shooter-2', 'time-shooter-3',
+			'tiny-fishing', 'tomb-of-the-mask', 'trap-the-cat', 'trivia-crack', 'tube-jumpers', 'tunnel-rush',
+			'unicycle-hero', 'vex-4', 'vex-5', 'vex-6', 'vex-7', 'vex-8', 'vex-x3m-2', 'vex-x3m', 'volley-random',
+			'war-the-knights', 'we-become-what-we-behold', 'wheelie-bike', 'wheely-2', 'wheely-3', 'wheely-4',
+			'wheely-5', 'wheely-6', 'wheely-7', 'wheely-8', 'wheely', 'wordle-unlimited', 'worlds-hardest-game-2',
+			'worlds-hardest-game-3', 'worlds-hardest-game', 'wrestle-bros', 'zombie-rush'
+		];
+
+		const gameIcons = {
+			'angry': '🐦', 'bird': '🦅', 'car': '🚗', 'chess': '♟️', 'dinosaur': '🦖',
+			'duck': '🦆', 'football': '🏈', 'game': '🎮', 'racing': '🏎️', 'soccer': '⚽',
+			'tank': '🎯', 'tennis': '🎾', 'zombie': '🧟', 'minecraft': '⛏️', 'flappy': '🦅',
+			'subway': '🚇', 'drift': '🏎️', 'cookie': '🍪', 'clicker': '👆', 'miner': '⛏️',
+			'papa': '🍕', 'wheely': '🚗', 'vex': '🎮', 'run': '🏃', 'slope': '⛷️'
+		};
+
+		function getGameIcon(name) {
+			const nameLower = name.toLowerCase();
+			for (let [key, icon] of Object.entries(gameIcons)) {
+				if (nameLower.includes(key)) return icon;
+			}
+			return '🎮';
+		}
+
+		let allGames = games.map(name => ({
+			name: name.replace(/[-_]/g, ' '),
+			file: name,
+			icon: getGameIcon(name)
+		}));
+
+		const gameList = document.getElementById('game-list');
+		const noResults = document.getElementById('no-results');
+		const searchInput = document.getElementById('search');
+		const gameCount = document.getElementById('game-count');
+		const loadingScreen = document.getElementById('loading-screen');
+
+		function renderGames(gamesToRender) {
+			gameList.innerHTML = gamesToRender.map(g => `
+				<a href="./${g.file}.html" class="game-card">
+					<div class="game-icon">${g.icon}</div>
+					<div class="game-name">${g.name}</div>
+				</a>
+			`).join('');
+			noResults.classList.toggle('show', gamesToRender.length === 0);
+			gameCount.textContent = `${gamesToRender.length} game${gamesToRender.length !== 1 ? 's' : ''}`;
+		}
+
+		searchInput.addEventListener('input', (e) => {
+			const term = e.target.value.toLowerCase();
+			const filtered = allGames.filter(g => g.name.toLowerCase().includes(term));
+			renderGames(filtered);
+			document.getElementById('search-wrap').classList.toggle('has-text', term.length > 0);
+		});
+
+		document.getElementById('search-clear').addEventListener('click', () => {
+			searchInput.value = '';
+			document.getElementById('search-wrap').classList.remove('has-text');
+			renderGames(allGames);
+		});
+
+		// Initial render
+		renderGames(allGames);
+		loadingScreen.classList.add('done');
+	</script>
+</body>
+</html>
