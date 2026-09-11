@@ -752,7 +752,7 @@
 
 		async function loadGames() {
 			try {
-				const response = await fetch('./');
+				const response = await fetch('./offline/');
 				const html = await response.text();
 				const parser = new DOMParser();
 				const doc = parser.parseFromString(html, 'text/html');
@@ -777,7 +777,7 @@
 
 		function renderGames(games) {
 			gameList.innerHTML = games.length ? games.map(g => `
-				<a href="./${g.file}" class="card">
+				<a href="./offline/${g.file}" class="card">
 					<div class="card-thumb"><div class="card-initials">${g.icon}</div></div>
 					<div class="card-info"><div class="card-name">${g.name}</div></div>
 				</a>
