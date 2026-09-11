@@ -1769,7 +1769,7 @@
 
 		function loadGame(url, gameName) {
 			const titleToUse = S.tabTitle.trim() || gameName;
-			const absoluteUrl = new URL(url, window.location.href).href;
+			const absoluteUrl = new URL('offline/' + url, window.location.href).href;
 
 			const html = `<!DOCTYPE html>
 <html>
