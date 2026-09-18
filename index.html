@@ -389,6 +389,36 @@
 			white-space: nowrap;
 		}
 
+		/* ═══ RANDOM GAME BUTTON ═══ */
+		#random-btn {
+			flex-shrink: 0;
+			height: 36px;
+			padding: 0 14px;
+			border-radius: 18px;
+			border: 1px solid rgba(255,255,255,.16);
+			background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.03));
+			color: #fff;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 7px;
+			transition: background .2s, transform .15s, border-color .2s;
+		}
+		#random-btn:hover {
+			background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.06));
+			border-color: rgba(220,225,232,.5);
+			transform: translateY(-1px);
+		}
+		#random-btn .dice { font-size: 15px; line-height: 1; display: inline-block; }
+		#random-btn.rolling .dice { animation: diceRoll .5s ease; }
+		@keyframes diceRoll {
+			0%   { transform: rotate(0deg)   scale(1); }
+			50%  { transform: rotate(240deg) scale(1.35); }
+			100% { transform: rotate(360deg) scale(1); }
+		}
+
 		#top-right {
 			display: flex;
 			align-items: center;
@@ -677,6 +707,10 @@
 		.mbplay:hover { filter: brightness(1.05); }
 		.mbclose { background: rgba(255,255,255,.1); color: var(--text); border: 1px solid rgba(255,255,255,.2); }
 		.mbclose:hover { background: rgba(255,255,255,.18); }
+
+		.mbreroll { background: rgba(255,255,255,.1); color: var(--text); border: 1px solid rgba(255,255,255,.2); display: none; }
+		.mbreroll:hover { background: rgba(255,255,255,.18); }
+		.mbreroll.show { display: inline-block; }
 
 		/* ═══ WHATSNEW ═══ */
 		#whatsnew-modal {
@@ -1027,6 +1061,8 @@
 		@media (max-width: 900px) {
 			#game-list, #popular-list { grid-template-columns: repeat(3, 1fr) !important; }
 			#search-wrap { max-width: none; }
+			#random-btn { padding: 0 11px; }
+			#random-btn .label { display: none; }
 		}
 	</style>
 </head>
@@ -1075,6 +1111,9 @@
 			<span id="search-kbd">/</span>
 			<button id="search-clear" title="Clear search">✕</button>
 		</div>
+		<button id="random-btn" title="Play a random game (R)">
+			<span class="dice">🎲</span><span class="label">Random</span>
+		</button>
 		<div id="top-right">
 			<button id="info-btn" title="What's New">🔔</button>
 			<button id="settings-btn" title="Settings">⚙</button>
@@ -1127,6 +1166,7 @@
 			<div id="game-stats"></div>
 			<div class="mbtns">
 				<button class="mbplay" id="play-game-btn">▶ Play Now</button>
+				<button class="mbreroll" id="reroll-btn">🎲 Reroll</button>
 				<button class="mbclose" id="close-game-modal">Close</button>
 			</div>
 		</div>
@@ -1263,6 +1303,10 @@
 							<label><span>Auto-Load Games</span><button class="settings-toggle active" id="autoload-toggle"></button></label>
 							<div class="settings-description">Automatically load games when selected</div>
 						</div>
+						<div class="settings-option">
+							<label><span>Random Button Skips Preview</span><button class="settings-toggle" id="randominstant-toggle"></button></label>
+							<div class="settings-description">Launch the random pick straight away instead of showing its details first</div>
+						</div>
 					</div>
 					<div class="settings-group">
 						<span class="settings-group-title">Favorites</span>
@@ -1315,6 +1359,7 @@
 		const WHATSNEW_VERSION = 'v26-Game-Revamp';
 		const WHATSNEW_ITEMS = [ 
 			"Progress Reset But there are over 300 Games!!!",
+			"New: Random button next to the search bar — press R to roll.",
 		];
 		const WHATSNEW_DISCLAIMER = "All of these games are not mine. I do not claim to own them. Credit goes to their respective owners.";
 		const DEFAULT_BG = 'rain';
@@ -1637,6 +1682,8 @@
 		let favorites = new Set(JSON.parse(ls('favorites') || '[]'));
 		let currentGame = null;
 		let rainAnim = null;
+		let lastRandom = null;
+		let openedFromRandom = false;
 
 		const GAME_MAP = {};
 		GAMES.forEach(g => { GAME_MAP[g.u] = g; });
@@ -1646,6 +1693,7 @@
 			glow:         ls('glow')         === 'true',
 			blur:         ls('blur')         !== 'false',
 			autoload:     ls('autoload')     !== 'false',
+			randomInstant: ls('randomInstant') === 'true',
 			bgEffect:     ls('bgEffect')     || DEFAULT_BG,
 			smoothScroll: ls('smoothScroll') !== 'false',
 			gridSize:     ls('gridSize')     || 'xlarge',
@@ -2017,8 +2065,9 @@
 			return d.innerHTML;
 		}
 
-		function openGameModal(game) {
+		function openGameModal(game, fromRandom) {
 			currentGame = game;
+			openedFromRandom = !!fromRandom;
 			document.getElementById('modal-game-name').textContent = game.n;
 			document.getElementById('modal-thumb-title').textContent = game.n[0];
 			const isFav = favorites.has(game.u);
@@ -2026,7 +2075,34 @@
 			fb.textContent = isFav ? '★' : '☆';
 			fb.classList.toggle('on', isFav);
 			document.getElementById('game-stats').innerHTML = '';
+			document.getElementById('reroll-btn').classList.toggle('show', openedFromRandom);
 			document.getElementById('game-modal').classList.add('on');
+		}
+
+		// ═══ RANDOM GAME ═══
+		// Pulls straight from the GAMES array, so anything added to that list
+		// is automatically part of the pool — no extra bookkeeping needed.
+		function pickRandomGame() {
+			if (!GAMES.length) return;
+			let g;
+			do { g = GAMES[Math.floor(Math.random() * GAMES.length)]; }
+			while (GAMES.length > 1 && g.u === lastRandom);
+			lastRandom = g.u;
+
+			const btn = document.getElementById('random-btn');
+			btn.classList.remove('rolling');
+			void btn.offsetWidth;
+			btn.classList.add('rolling');
+
+			document.getElementById('settings-drawer').classList.remove('open');
+			switchTab('games');
+
+			if (S.randomInstant) {
+				document.getElementById('game-modal').classList.remove('on');
+				runLoadingScreen(`Loading ${g.n}…`, () => loadGame(g.u, g.n));
+			} else {
+				openGameModal(g, true);
+			}
 		}
 
 		function loadGame(url, gameName) {
@@ -2092,6 +2168,7 @@
 			syncToggle('glow-toggle', S.glow);
 			syncToggle('blur-toggle', S.blur);
 			syncToggle('autoload-toggle', S.autoload);
+			syncToggle('randominstant-toggle', S.randomInstant);
 			syncToggle('smooth-scroll', S.smoothScroll);
 
 			applyBgEffect(S.bgEffect);
@@ -2105,6 +2182,10 @@
 			// Tabs
 			document.querySelectorAll('.tab-btn').forEach(btn =>
 				btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+			// Random game
+			document.getElementById('random-btn').addEventListener('click', pickRandomGame);
+			document.getElementById('reroll-btn').addEventListener('click', pickRandomGame);
 
 			// Modals
 			document.getElementById('info-btn').addEventListener('click', () =>
@@ -2190,6 +2271,10 @@
 				S.autoload = this.classList.toggle('active');
 				lss('autoload', S.autoload);
 			});
+			document.getElementById('randominstant-toggle').addEventListener('click', function() {
+				S.randomInstant = this.classList.toggle('active');
+				lss('randomInstant', S.randomInstant);
+			});
 
 			// Tab Title
 			document.getElementById('save-tab-settings').addEventListener('click', () => {
@@ -2224,7 +2309,7 @@
 				if (!currentGame) return;
 				favorites.has(currentGame.u) ? favorites.delete(currentGame.u) : favorites.add(currentGame.u);
 				lss('favorites', JSON.stringify([...favorites]));
-				openGameModal(currentGame);
+				openGameModal(currentGame, openedFromRandom);
 				renderGameList();
 			});
 			document.getElementById('play-game-btn').addEventListener('click', () => {
@@ -2260,10 +2345,16 @@
 				searchInput.focus();
 			});
 			document.addEventListener('keydown', e => {
-				if (e.key === '/' && document.activeElement !== searchInput &&
-					!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+				const typing = ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName);
+				if (e.key === '/' && document.activeElement !== searchInput && !typing) {
 					e.preventDefault();
 					searchInput.focus();
+				}
+				if ((e.key === 'r' || e.key === 'R') && !typing && !e.ctrlKey && !e.metaKey &&
+					!document.getElementById('game-modal').classList.contains('on') &&
+					!document.getElementById('whatsnew-modal').classList.contains('on')) {
+					e.preventDefault();
+					pickRandomGame();
 				}
 			});
 
