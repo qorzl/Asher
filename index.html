@@ -32,79 +32,6 @@
 			overflow: hidden;
 		}
 
-		/* ═══ LOADING SCREEN ═══ */
-		#loading-screen {
-			position: fixed;
-			inset: 0;
-			z-index: 500;
-			background: #0a0d13;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: opacity .5s ease, visibility .5s ease;
-		}
-		#loading-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
-
-		#loading-center { text-align: center; }
-		#loading-title {
-			font-size: 1.1rem;
-			font-weight: 800;
-			letter-spacing: .02em;
-			background: var(--metal);
-			background-size: 200% auto;
-			-webkit-background-clip: text;
-			background-clip: text;
-			color: transparent;
-			animation: metalShift 3s linear infinite;
-			margin-bottom: 8px;
-		}
-		#loading-percent {
-			font-size: 12px;
-			color: rgba(255,255,255,.35);
-			font-variant-numeric: tabular-nums;
-		}
-
-		#loading-bar-track {
-			position: fixed;
-			left: 0; right: 0; bottom: 0;
-			height: 10px;
-			background: rgba(255,255,255,.06);
-			border-top: 1px solid rgba(255,255,255,.08);
-			overflow: visible;
-		}
-		#loading-bar-fill {
-			height: 100%;
-			width: 0%;
-			background: var(--metal);
-			background-size: 200% auto;
-			animation: metalShift 2s linear infinite;
-			box-shadow: 0 0 12px rgba(216,221,227,.55);
-			transition: width .15s linear;
-		}
-		#loading-walker {
-			position: absolute;
-			left: 0%;
-			bottom: 10px;
-			transform: translate(-50%, 0);
-			line-height: 1;
-			animation: walkerBob .35s ease-in-out infinite alternate;
-			transition: left .15s linear;
-			filter: drop-shadow(0 2px 3px rgba(0,0,0,.5));
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		#loading-walker svg {
-			display: block;
-			width: 22px;
-			height: 22px;
-			animation: metalShift 2s linear infinite;
-		}
-		@keyframes walkerBob {
-			from { transform: translate(-50%, 0); }
-			to   { transform: translate(-50%, -5px); }
-		}
-
 		/* ═══ BACKGROUNDS ═══ */
 		#bg-layer {
 			position: fixed;
@@ -502,7 +429,6 @@
 			align-items: center;
 			gap: 6px;
 		}
-		.section-title-popular::before { content: '🔥'; -webkit-text-fill-color: initial; font-size: .9rem; }
 
 		#game-list, #popular-list {
 			display: grid;
@@ -1068,31 +994,6 @@
 </head>
 
 <body>
-	<div id="loading-screen" class="done">
-		<div id="loading-center">
-			<div id="loading-title">Loading games…</div>
-			<div id="loading-percent">0%</div>
-		</div>
-		<div id="loading-bar-track">
-			<div id="loading-walker">
-				<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-					<defs>
-						<linearGradient id="walkerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-							<stop offset="0%" stop-color="#eef1f4"/>
-							<stop offset="20%" stop-color="#b8bfc9"/>
-							<stop offset="40%" stop-color="#6d7480"/>
-							<stop offset="55%" stop-color="#d8dde3"/>
-							<stop offset="70%" stop-color="#8b93a0"/>
-							<stop offset="85%" stop-color="#f2f4f6"/>
-							<stop offset="100%" stop-color="#9aa1ab"/>
-						</linearGradient>
-					</defs>
-					<path fill="url(#walkerGrad)" d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/>
-				</svg>
-			</div>
-			<div id="loading-bar-fill"></div>
-		</div>
-	</div>
 	<div id="bg-layer" class="stars"></div>
 	<div id="space-objects"></div>
 	<canvas id="rain-canvas"></canvas>
@@ -1115,8 +1016,8 @@
 			<span class="dice">🎲</span><span class="label">Random</span>
 		</button>
 		<div id="top-right">
-			<button id="info-btn" title="What's New">🔔</button>
-			<button id="settings-btn" title="Settings">⚙</button>
+			<button id="info-btn" title="What's New"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></button>
+			<button id="settings-btn" title="Settings"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
 		</div>
 	</div>
 
@@ -1139,7 +1040,6 @@
 		</div>
 		<div id="browser-container">
 			<div id="under-construction">
-				<div class="uc-icon">🚧</div>
 				<h2>Browser — Under Construction</h2>
 				<p>This tab is being reworked. Check back soon.</p>
 			</div>
@@ -1148,7 +1048,7 @@
 
 	<div id="whatsnew-modal">
 		<div id="whatsnew-box">
-			<h3>🔔 What's New</h3>
+			<h3>What's New</h3>
 			<div id="whatsnew-entries"></div>
 			<button id="whatsnew-close">Close</button>
 		</div>
@@ -1165,8 +1065,8 @@
 			</div>
 			<div id="game-stats"></div>
 			<div class="mbtns">
-				<button class="mbplay" id="play-game-btn">▶ Play Now</button>
-				<button class="mbreroll" id="reroll-btn">🎲 Reroll</button>
+				<button class="mbplay" id="play-game-btn"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path d="M8 5v14l11-7z"/></svg>Play Now</button>
+				<button class="mbreroll" id="reroll-btn">Reroll</button>
 				<button class="mbclose" id="close-game-modal">Close</button>
 			</div>
 		</div>
@@ -1174,7 +1074,7 @@
 
 	<div id="settings-drawer">
 		<div class="settings-header">
-			<div class="settings-header-icon">⚙</div>
+			<div class="settings-header-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="#10131a" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
 			<div class="settings-header-text">
 				<h2>Settings</h2>
 				<div class="settings-header-sub">Customize your experience</div>
@@ -1364,8 +1264,19 @@
 		const WHATSNEW_DISCLAIMER = "All of these games are not mine. I do not claim to own them. Credit goes to their respective owners.";
 		const DEFAULT_BG = 'rain';
 
+		// Loading screen settings
+		const LOAD_MS = 8000; // how long the loading screen runs, in milliseconds
+		const LOAD_TIPS = [
+			'Press F11 in the game tab for fullscreen.',
+			'Star a game to pin it to the top of your list.',
+			'Press / on the home page to jump straight to search.',
+			'Press R on the home page to roll a random game.',
+			'Your settings save automatically.'
+		];
+		const LOADER_TEMPLATE = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>__TITLE_TEXT__<\/title>\n<style>\n:root{\n\t--metal:linear-gradient(135deg,#eef1f4 0%,#b8bfc9 20%,#6d7480 40%,#d8dde3 55%,#8b93a0 70%,#f2f4f6 85%,#9aa1ab 100%);\n}\n*{box-sizing:border-box;margin:0;padding:0}\nhtml,body{height:100%;background:#000;color:#fff;overflow:hidden;font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,Arial,sans-serif}\n#game{position:fixed;inset:0;width:100%;height:100%;border:0;display:block;background:#000}\n\n/* \u2550\u2550\u2550 LOADING SCREEN (same look as before) \u2550\u2550\u2550 */\n#loader{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#0a0d13;overflow:hidden;transition:opacity .6s ease,visibility .6s ease}\n#loader.done{opacity:0;visibility:hidden;pointer-events:none}\n\n#glow{position:absolute;left:50%;top:46%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(190,205,230,.12),transparent 62%);animation:breathe 4.5s ease-in-out infinite}\n@keyframes breathe{0%,100%{opacity:.5;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}\n#specks span{position:absolute;bottom:-10px;border-radius:50%;background:rgba(216,221,227,.55);opacity:.7;animation:rise linear infinite}\n@keyframes rise{to{transform:translateY(-110vh);opacity:0}}\n\n#center{position:relative;text-align:center;padding:0 24px;max-width:640px;width:100%;margin-top:-30px}\n#title{font-size:1.25rem;font-weight:800;letter-spacing:.02em;line-height:1.25;margin-bottom:10px;overflow-wrap:anywhere;background:var(--metal);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:metalShift 3s linear infinite}\n@keyframes metalShift{0%{background-position:0% 50%}100%{background-position:200% 50%}}\n#percent{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.85);margin-bottom:16px}\n\n#log{display:flex;flex-direction:column;align-items:center;gap:5px;min-height:78px;justify-content:flex-end}\n.msg{font-size:13px;letter-spacing:.02em;color:rgba(255,255,255,.6);transition:opacity .5s ease,transform .5s ease;opacity:0;transform:translateY(6px)}\n.msg.cur::after{content:\"\";display:inline-block;width:1.5em;text-align:left;animation:dots 1.4s steps(1,end) infinite}\n.msg.ready::after{animation:none;content:\"\"}\n@keyframes dots{0%{content:\"\"}25%{content:\".\"}50%{content:\"..\"}75%{content:\"...\"}}\n\n#tip{position:absolute;left:0;right:0;bottom:52px;padding:0 24px;text-align:center;font-size:13px;color:rgba(255,255,255,.4);transition:opacity .45s ease}\n#tip b{margin-right:8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65)}\n#tip.hide{opacity:0}\n\n/* bottom bar + walker */\n#track{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.08);overflow:visible}\n#fill{height:100%;width:0%;background:var(--metal);background-size:200% auto;animation:metalShift 2s linear infinite;box-shadow:0 0 12px rgba(216,221,227,.55)}\n.tick{position:absolute;bottom:0;width:2px;height:18px;margin-left:-1px;background:rgba(255,255,255,.16);border-radius:1px;transition:background .3s,box-shadow .3s}\n.tick.hit{background:#d8dde3;box-shadow:0 0 8px rgba(216,221,227,.8)}\n#walker{position:absolute;left:0%;bottom:10px;transform:translate(-50%,0);line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}\n#walkerIn{display:flex;animation:bob .35s ease-in-out infinite alternate}\n@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-5px)}}\n#walker svg{display:block;width:22px;height:22px;animation:metalShift 2s linear infinite}\n#walker.hop svg{animation:metalShift 2s linear infinite,hop .5s ease-out}\n@keyframes hop{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-26px) scale(1.15)}100%{transform:translateY(0) scale(1)}}\n\n.spark{position:absolute;bottom:14px;width:3px;height:3px;border-radius:50%;background:#e8ebee;box-shadow:0 0 6px rgba(216,221,227,.9);pointer-events:none;animation:spark .75s ease-out forwards}\n@keyframes spark{to{transform:translate(var(--dx),var(--dy));opacity:0}}\n\n@media (prefers-reduced-motion:reduce){\n\t#glow,#specks span,#title,#fill,#walkerIn,#walker svg,.msg.cur::after{animation:none}\n}\n<\/style>\n<\/head>\n<body>\n<iframe id=\"game\" allowfullscreen allow=\"fullscreen *; autoplay *; gamepad *\"><\/iframe>\n\n<div id=\"loader\" role=\"status\" aria-live=\"polite\">\n\t<div id=\"glow\"><\/div>\n\t<div id=\"specks\"><\/div>\n\t<div id=\"center\">\n\t\t<div id=\"title\">Loading __NAME_TEXT__\u2026<\/div>\n\t\t<div id=\"percent\">0%<\/div>\n\t\t<div id=\"log\"><\/div>\n\t<\/div>\n\t<div id=\"tip\"><\/div>\n\t<div id=\"track\">\n\t\t<div id=\"fill\"><\/div>\n\t\t<div class=\"tick\" style=\"left:25%\"><\/div>\n\t\t<div class=\"tick\" style=\"left:50%\"><\/div>\n\t\t<div class=\"tick\" style=\"left:75%\"><\/div>\n\t\t<div id=\"walker\">\n\t\t\t<div id=\"walkerIn\">\n\t\t\t\t<svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n\t\t\t\t\t<defs>\n\t\t\t\t\t\t<linearGradient id=\"walkerGrad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">\n\t\t\t\t\t\t\t<stop offset=\"0%\" stop-color=\"#eef1f4\"/>\n\t\t\t\t\t\t\t<stop offset=\"20%\" stop-color=\"#b8bfc9\"/>\n\t\t\t\t\t\t\t<stop offset=\"40%\" stop-color=\"#6d7480\"/>\n\t\t\t\t\t\t\t<stop offset=\"55%\" stop-color=\"#d8dde3\"/>\n\t\t\t\t\t\t\t<stop offset=\"70%\" stop-color=\"#8b93a0\"/>\n\t\t\t\t\t\t\t<stop offset=\"85%\" stop-color=\"#f2f4f6\"/>\n\t\t\t\t\t\t\t<stop offset=\"100%\" stop-color=\"#9aa1ab\"/>\n\t\t\t\t\t\t<\/linearGradient>\n\t\t\t\t\t<\/defs>\n\t\t\t\t\t<path fill=\"url(#walkerGrad)\" d=\"M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z\"/>\n\t\t\t\t<\/svg>\n\t\t\t<\/div>\n\t\t<\/div>\n\t<\/div>\n<\/div>\n\n<script>\n(function () {\n\tvar CFG = __CONFIG__;\n\n\t// Progress curve: share of the total time each leg takes, and the % it ends on.\n\t// Each leg eases in and out, so the walker speeds up and slows down like real loading.\n\tvar LEGS = [\n\t\t{ w: 0.10, to: 10 },\n\t\t{ w: 0.20, to: 32 },\n\t\t{ w: 0.22, to: 55 },\n\t\t{ w: 0.22, to: 75 },\n\t\t{ w: 0.16, to: 92 },\n\t\t{ w: 0.10, to: 100 }\n\t];\n\t// Status line changes when progress passes each threshold.\n\tvar MESSAGES = [\n\t\t[0,  'Starting up'],\n\t\t[6,  'Checking cache'],\n\t\t[14, 'Fetching game files'],\n\t\t[26, 'Reading sprites'],\n\t\t[38, 'Loading audio'],\n\t\t[50, 'Unpacking assets'],\n\t\t[62, 'Building levels'],\n\t\t[72, 'Compiling shaders'],\n\t\t[82, 'Warming up the engine'],\n\t\t[90, 'Connecting controls'],\n\t\t[96, 'Final touches'],\n\t\t[99, 'Almost ready']\n\t];\n\tvar MILESTONES = [25, 50, 75];\n\n\tvar frame = document.getElementById('game');\n\tvar loader = document.getElementById('loader');\n\tvar fill = document.getElementById('fill');\n\tvar walker = document.getElementById('walker');\n\tvar pctEl = document.getElementById('percent');\n\tvar logEl = document.getElementById('log');\n\tvar tipEl = document.getElementById('tip');\n\tvar specks = document.getElementById('specks');\n\tvar track = document.getElementById('track');\n\tvar ticks = track.querySelectorAll('.tick');\n\n\tdocument.title = CFG.title;\n\tsetInterval(function () { if (document.title !== CFG.title) document.title = CFG.title; }, 100);\n\n\t// Floating specks in the background\n\tfor (var k = 0; k < 28; k++) {\n\t\tvar sp = document.createElement('span');\n\t\tvar size = 1 + Math.random() * 2.5;\n\t\tsp.style.left = (Math.random() * 100) + '%';\n\t\tsp.style.width = sp.style.height = size + 'px';\n\t\tsp.style.animationDuration = (8 + Math.random() * 10) + 's';\n\t\tsp.style.animationDelay = (-Math.random() * 14) + 's';\n\t\tspecks.appendChild(sp);\n\t}\n\n\t// Rotating tips\n\tvar tipIdx = Math.floor(Math.random() * CFG.tips.length);\n\tfunction showTip() {\n\t\ttipEl.innerHTML = '';\n\t\tvar b = document.createElement('b');\n\t\tb.textContent = 'Tip';\n\t\ttipEl.appendChild(b);\n\t\ttipEl.appendChild(document.createTextNode(CFG.tips[tipIdx % CFG.tips.length]));\n\t}\n\tshowTip();\n\tvar tipTimer = setInterval(function () {\n\t\ttipEl.classList.add('hide');\n\t\tsetTimeout(function () { tipIdx++; showTip(); tipEl.classList.remove('hide'); }, 450);\n\t}, 2800);\n\n\t// Status log: newest line at the bottom, older ones fade upward\n\tvar lines = [];\n\tvar OPACITIES = [1, 0.5, 0.28, 0.12];\n\tfunction pushMessage(text) {\n\t\tvar el = document.createElement('div');\n\t\tel.className = 'msg cur';\n\t\tel.textContent = text;\n\t\tlogEl.appendChild(el);\n\t\tlines.push(el);\n\t\trequestAnimationFrame(function () { relayout(); });\n\t}\n\tfunction relayout() {\n\t\tfor (var i = 0; i < lines.length; i++) {\n\t\t\tvar fromEnd = lines.length - 1 - i;\n\t\t\tvar el = lines[i];\n\t\t\tif (fromEnd >= OPACITIES.length) {\n\t\t\t\tif (el.parentNode) el.parentNode.removeChild(el);\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tel.style.opacity = OPACITIES[fromEnd];\n\t\t\tel.style.transform = 'translateY(0)';\n\t\t\tif (fromEnd > 0) el.classList.remove('cur');\n\t\t}\n\t\tlines = lines.filter(function (el) { return el.parentNode; });\n\t}\n\n\t// Sparkles behind the walker\n\tfunction spawnSpark(leftPct, burst) {\n\t\tvar s = document.createElement('span');\n\t\ts.className = 'spark';\n\t\ts.style.left = leftPct + '%';\n\t\tvar ang = burst ? Math.random() * Math.PI : Math.PI * (0.55 + Math.random() * 0.4);\n\t\tvar dist = burst ? 26 + Math.random() * 40 : 10 + Math.random() * 22;\n\t\ts.style.setProperty('--dx', (burst ? Math.cos(ang) * dist : -dist * 0.9) + 'px');\n\t\ts.style.setProperty('--dy', (-Math.sin(ang) * dist) + 'px');\n\t\ttrack.appendChild(s);\n\t\ts.addEventListener('animationend', function () { if (s.parentNode) s.parentNode.removeChild(s); });\n\t}\n\n\tfunction ease(x) { return x * x * (3 - 2 * x); }\n\tfunction progressAt(t) {\n\t\tvar acc = 0, prev = 0;\n\t\tfor (var i = 0; i < LEGS.length; i++) {\n\t\t\tvar leg = LEGS[i];\n\t\t\tif (t <= acc + leg.w || i === LEGS.length - 1) {\n\t\t\t\tvar f = Math.min(1, Math.max(0, (t - acc) / leg.w));\n\t\t\t\treturn prev + (leg.to - prev) * ease(f);\n\t\t\t}\n\t\t\tacc += leg.w;\n\t\t\tprev = leg.to;\n\t\t}\n\t}\n\n\tvar msgIdx = -1;\n\tvar milestoneHit = [false, false, false];\n\tvar lastSpark = 0;\n\tvar lastP = 0;\n\n\tfunction paint(p, now) {\n\t\tvar v = Math.min(100, p);\n\t\tfill.style.width = v + '%';\n\t\tvar pos = 1.2 + v * 0.976; // keep the walker fully on screen\n\t\twalker.style.left = pos + '%';\n\t\tpctEl.textContent = Math.floor(v) + '%';\n\n\t\t// status messages\n\t\tvar want = msgIdx;\n\t\tfor (var i = 0; i < MESSAGES.length; i++) if (v >= MESSAGES[i][0]) want = i;\n\t\tif (want !== msgIdx) { msgIdx = want; pushMessage(MESSAGES[msgIdx][1]); }\n\n\t\t// milestones: light the tick, hop, burst of sparks\n\t\tfor (var m = 0; m < MILESTONES.length; m++) {\n\t\t\tif (!milestoneHit[m] && v >= MILESTONES[m]) {\n\t\t\t\tmilestoneHit[m] = true;\n\t\t\t\tticks[m].classList.add('hit');\n\t\t\t\twalker.classList.remove('hop');\n\t\t\t\tvoid walker.offsetWidth;\n\t\t\t\twalker.classList.add('hop');\n\t\t\t\tfor (var n = 0; n < 12; n++) spawnSpark(MILESTONES[m], true);\n\t\t\t}\n\t\t}\n\n\t\t// trailing sparkles while moving\n\t\tif (v > lastP + 0.01 && now - lastSpark > 90) {\n\t\t\tspawnSpark(pos, false);\n\t\t\tlastSpark = now;\n\t\t}\n\t\tlastP = v;\n\t}\n\n\tvar frameLoaded = false;\n\tvar finished = false;\n\tvar GRACE = 8000; // keep waiting this long past the timer if the game is slow\n\tframe.addEventListener('load', function () { frameLoaded = true; });\n\tframe.src = CFG.url;\n\n\tfunction finish() {\n\t\tif (finished) return;\n\t\tfinished = true;\n\t\tclearInterval(tipTimer);\n\t\tpaint(100, performance.now());\n\t\tpushMessage('Ready');\n\t\tsetTimeout(function () {\n\t\t\tvar cur = logEl.querySelector('.msg:last-child');\n\t\t\tif (cur) cur.classList.add('ready');\n\t\t}, 60);\n\t\twalker.classList.remove('hop');\n\t\tvoid walker.offsetWidth;\n\t\twalker.classList.add('hop');\n\t\tfor (var n = 0; n < 16; n++) spawnSpark(98.8, true);\n\t\tsetTimeout(function () {\n\t\t\tloader.classList.add('done');\n\t\t\ttry { frame.contentWindow.focus(); } catch (e) {}\n\t\t\tsetTimeout(function () { loader.style.display = 'none'; }, 800);\n\t\t}, 700);\n\t}\n\n\tvar t0 = performance.now();\n\tvar slowNoted = false;\n\tfunction tick(now) {\n\t\tvar elapsed = now - t0;\n\t\tvar t = elapsed / CFG.ms;\n\t\tvar p = progressAt(Math.min(t, 1));\n\t\tvar timedOut = elapsed >= CFG.ms + GRACE;\n\n\t\tif (t >= 1 && !frameLoaded && !timedOut) {\n\t\t\tp = Math.min(p, 99);\n\t\t\tif (!slowNoted && elapsed > CFG.ms + 2500) {\n\t\t\t\tslowNoted = true;\n\t\t\t\tpushMessage('Still waiting on the game');\n\t\t\t}\n\t\t}\n\t\tpaint(p, now);\n\n\t\tif (t >= 1 && (frameLoaded || timedOut)) { finish(); return; }\n\t\trequestAnimationFrame(tick);\n\t}\n\trequestAnimationFrame(tick);\n})();\n<\/script>\n<\/body>\n<\/html>\n";
+
 		const POPULAR_GAMES = [
-			'space-waves.html', 'choppy-orc.html', 'polytrack.html','eggy.html','monkey-mart.html',
+			'space-waves.html', 'choppy-orc.html', 'polytrack.html','eggy-car.html','monkey-mart.html',
 		];
 
 		const GAMES = [
@@ -1374,40 +1285,35 @@
 {n:'Ragdoll Hit',u:'ragdoll-hit.html'},
 {n:'Time Shooter',u:'time-shooter-3.htm'},
 {n:'Retro Bowl',u:'retro-bowl.html'},
-{n:'Snow Rider',u:'snow-rider.html'},
+{n:'Snow Rider',u:'snow-rider.htm'},
 {n:'Cluster Rush',u:'cluster-rush.html'},
 {n:'Poly Track',u:'polytrack.html'},
 {n:'Ragdoll Soccer',u:'ragdoll-soccer.html'},
-{n:'Cookie cliker',u:'Cookie.htm'},
+{n:'Cookie cliker',u:'cookie-clicker.htm'},
 {n:'Learn To Fly 3',u:'learn-to-fly-3.html'},
 {n:'Retro Bowl College',u:'retro-bowl-college.html'},
-{n:'Age Of War',u:'age-of-war-2.html'},
+{n:'Age Of War',u:'age-of-war.html'},
 {n:'Tiny Fishing',u:'tiny-fishing.html'},
-{n:'Drive Mad',u:'Drive-mad.html'},
+{n:'Drive Mad',u:'drive-mad.htm'},
 {n:'Stick Man Hook',u:'stickman-hook.html'},
 {n:'Basket Random',u:'basket-random.html'},
 {n:'1v1 Lol',u:'1v1.lol.html'},
 {n:'Tunnel Rush',u:'tunnel-rush.html'},
-{n:'Indian Truck Simulator',u:'Indian-truck-simulator.html'},
-{n:'Doge Miner',u:'Doge-miner.html'},
 {n:'Slope 3',u:'slope-3.html'},
 {n:'Tag',u:'tag.html'},
 {n:'Moneky Mart',u:'monkey-mart.html'},
 {n:'Drift Boss',u:'drift-boss.htm'},
 {n:'Space Waves',u:'space-waves.html'},
-{n:'Rooftop Snipers',u:'rooftop-snipers-2.html'},
-{n:'Ultimate Car Simulator',u:'Ucarsim.html'},
-{n:"Awesome Tanks 2",u:'Tanks.html'},
-{n:'10 Minutes Till Dawn',u:'10min.html'},
-{n:'Minecraft',u:'EaglerCraft 1.12 [wasm].html'},
-{n:'Eggy Car',u:'eggy.html'},
+{n:'Rooftop Snipers',u:'rooftop-snipers.htm'},
+{n:"Awesome Tanks 2",u:'awesome-tanks-2.html'},
+{n:'10 Minutes Till Dawn',u:'10-minutes-till-dawn.html'},
+{n:'Minecraft',u:'1.12_WASM.html'},
+{n:'Eggy Car',u:'eggy-car.html'},
 {n:'Choppy Orc',u:'choppy-orc.html'},
-{n:'12 Mini Battles',u:'12m.html'},
+{n:'12 Mini Battles',u:'12-mini-battles.html'},
 {n:'Crossy Road',u:'crossy-road.html'},
-{n:'BTD5',u:'bloonsTD5.html'},
-{n:'Case clicker 2',u:'CsGo-clicker.html'},
-{n:'Bit life',u:'Bit-life.html'},
-{n:'Lol Beans',u:'LolB.html'},
+{n:'BTD5',u:'bloons-TD-5.html'},
+{n:'Bit life',u:'bitlife.html'},
 {n:'1 on 1 Soccer',u:'1-on-1-soccer.html'},
 {n:'1 on 1 Tennis',u:'1-on-1-tennis.html'},
 {n:'2048',u:'2048.html'},
@@ -1514,7 +1420,7 @@
 {n:'Geometry Dash Lite',u:'geometry-dash-lite.html'},
 {n:'Geometry Vibes',u:'geometry-vibes.html'},
 {n:'Get On Top',u:'get-on-top.html'},
-{n:'Getaway Shootout',u:'getaway-shootout.htm'},
+{n:'Getaway Shootout',u:'getaway-shootout.html'},
 {n:'Gladihoppers',u:'gladi-hoppers.html'},
 {n:'Google Baseball',u:'google-baseball.html'},
 {n:'Google Dino',u:'google-dino.html'},
@@ -1671,6 +1577,57 @@
 {n:"World's Hardest Game 3",u:'worlds-hardest-game-3.html'},
 {n:'Wrestle Bros',u:'wrestle-bros.html'},
 {n:'Zombie Rush',u:'zombie-rush.html'},
+{n:'3D Free Kick',u:'3d-free-kick.html'},
+{n:'9007199254740992',u:'9007199254740992.html'},
+{n:'Bad Time Simulator',u:'bad-time-simulator.html'},
+{n:'Bank Robbery 2',u:'bank-robbery-2.html'},
+{n:'Bank Robbery 3',u:'bank-robbery-3.html'},
+{n:'Big Ice Tower Tiny Square',u:'big-ice-tower-tiny-square.html'},
+{n:'Big Neon Tower Tiny Square',u:'big-neon-tower-tiny-square.html'},
+{n:'Big Tower Tiny Square',u:'big-tower-tiny-square.html'},
+{n:'Big Tower Tiny Square 2',u:'big-tower-tiny-square-2.html'},
+{n:'Boxel Rebound',u:'boxel-rebound.html'},
+{n:'Burrito Bison Launcha Libre',u:'burrito-bison-launcha-libre.html'},
+{n:'Chaos Faction 2',u:'chaos-faction-2.html'},
+{n:'Coreball',u:'coreball.html'},
+{n:'Cut The Rope 2',u:'cut-the-rope-2.html'},
+{n:'Cut The Rope Holiday Gift',u:'cut-the-rope-holiday-gift.html'},
+{n:'Cut The Rope Time Travel',u:'cut-the-rope-time-travel.html'},
+{n:'Deadly Descent',u:'deadly-descent.html'},
+{n:'Drift Hunters Pro',u:'drift-hunters-pro.html'},
+{n:'Escape Road 3',u:'escape-road-3.html'},
+{n:"Eugene's Life",u:'eugenes-life.html'},
+{n:'Fireblob',u:'fireblob.html'},
+{n:'Fleeing The Complex',u:'fleeing-the-complex.html'},
+{n:'FNAF Sister Location',u:'fnaf-sister-location.html'},
+{n:'Friday Night Funkin',u:'friday-night-funkin.html'},
+{n:'Ice Dodo',u:'ice-dodo.html'},
+{n:'Idle Dice',u:'idle-dice.html'},
+{n:'Infiltrating The Airship',u:'infiltrating-the-airship.html'},
+{n:'Jacksmith',u:'jacksmith.html'},
+{n:'Kitty Toy',u:'kittytoy.html'},
+{n:'Little Alchemy 2',u:'little-alchemy-2.html'},
+{n:'Madness Project Nexus',u:'madness-project-nexus.html'},
+{n:'Minecraft 1.8 (WASM)',u:'1.8_WASM.html'},
+{n:'Motherload',u:'motherload.html'},
+{n:'Murder',u:'murder.html'},
+{n:'OpenTTD',u:'openTTD.html'},
+{n:'Rooftop Run',u:'rooftop-run.html'},
+{n:'Sandbox City',u:'sandbox-city.html'},
+{n:'Six Cats Under',u:'six-cats-under.html'},
+{n:'Snail Bob',u:'snail-bob.html'},
+{n:'Snail Bob 2',u:'snail-bob-2.html'},
+{n:'Snail Bob 3',u:'snail-bob-3.html'},
+{n:'Snail Bob 4',u:'snail-bob-4.html'},
+{n:'Snail Bob 5',u:'snail-bob-5.html'},
+{n:'Snail Bob 6',u:'snail-bob-6.html'},
+{n:'Snail Bob 7',u:'snail-bob-7.html'},
+{n:'Snail Bob 8',u:'snail-bob-8.html'},
+{n:'Stealing The Diamond',u:'stealing-the-diamond.html'},
+{n:'Tanuki Sunset',u:'tanuki-sunset.html'},
+{n:'Tetrominoes',u:'tetrominoes.html'},
+{n:'Yohoho.io',u:'yohoho-io.html'},
+{n:'Zrist',u:'zrist.html'},
 
 		];
 
@@ -1990,7 +1947,7 @@
 			card.className = 'card';
 			card.style.borderRadius = S.cardRadius + 'px';
 			card.innerHTML = `
-				${showPopularBadge ? '<div class="card-popular-badge">🔥 Popular</div>' : ''}
+				${showPopularBadge ? '<div class="card-popular-badge">Popular</div>' : ''}
 				<div class="card-thumb"><div class="card-initials">${game.n[0]}</div></div>
 				<div class="card-info">
 					<div class="card-name" style="font-size:${S.fontSize}px">${highlightMatch(game.n, query)}</div>
@@ -2099,34 +2056,31 @@
 
 			if (S.randomInstant) {
 				document.getElementById('game-modal').classList.remove('on');
-				runLoadingScreen(`Loading ${g.n}…`, () => loadGame(g.u, g.n));
+				loadGame(g.u, g.n);
 			} else {
 				openGameModal(g, true);
 			}
 		}
 
 		function loadGame(url, gameName) {
+			// The tab has to open right now, while the click still counts as a user action.
+			// Browsers block pop-ups opened after a few seconds, which a long loading screen would hit.
+			// So the loading screen lives inside the new tab and plays there while the game loads.
 			const titleToUse = S.tabTitle.trim() || gameName;
 			const absoluteUrl = new URL('offline/' + url, window.location.href).href;
+			const page = buildGamePage(absoluteUrl, titleToUse, gameName);
+			const blobUrl = URL.createObjectURL(new Blob([page], { type: 'text/html' }));
+			const w = window.open(blobUrl, '_blank');
+			if (!w) alert('Your browser blocked the new tab. Allow pop-ups for this site and try again.');
+		}
 
-			const html = `<!DOCTYPE html>
-<html>
-<head>
-	<title>${titleToUse}</title>
-</head>
-<body style="margin:0;padding:0;background:#000;overflow:hidden;">
-	<iframe src="${absoluteUrl}" style="width:100vw;height:100vh;border:none;display:block;" allowfullscreen allow="fullscreen *; autoplay *; gamepad *"></iframe>
-	<script>
-		var t = ${JSON.stringify(titleToUse)};
-		document.title = t;
-		setInterval(() => { if (document.title !== t) document.title = t; }, 100);
-	<\/script>
-</body>
-</html>`;
-
-			const blob = new Blob([html], { type: 'text/html' });
-			const blobUrl = URL.createObjectURL(blob);
-			window.open(blobUrl, '_blank');
+		function buildGamePage(url, title, name) {
+			const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+			const cfg = JSON.stringify({ url: url, title: title, ms: LOAD_MS, tips: LOAD_TIPS }).replace(/</g, '\\u003c');
+			return LOADER_TEMPLATE
+				.split('__TITLE_TEXT__').join(esc(title))
+				.split('__NAME_TEXT__').join(esc(name))
+				.split('__CONFIG__').join(cfg);
 		}
 
 		// ═══ BROWSER FUNCTIONS ═══
@@ -2316,7 +2270,7 @@
 				if (!currentGame) return;
 				const game = currentGame;
 				document.getElementById('game-modal').classList.remove('on');
-				runLoadingScreen(`Loading ${game.n}…`, () => loadGame(game.u, game.n));
+				loadGame(game.u, game.n);
 			});
 			document.getElementById('close-game-modal').addEventListener('click', () =>
 				document.getElementById('game-modal').classList.remove('on'));
@@ -2365,44 +2319,6 @@
 			}
 		});
 
-		// ═══ LOADING SCREEN ═══
-		// Plays whenever a game is launched — always takes exactly LOAD_DURATION ms,
-		// then calls onComplete (which actually opens the game).
-		function runLoadingScreen(label, onComplete) {
-			const screen = document.getElementById('loading-screen');
-			const fill = document.getElementById('loading-bar-fill');
-			const walker = document.getElementById('loading-walker');
-			const pct = document.getElementById('loading-percent');
-			const title = document.getElementById('loading-title');
-
-			title.textContent = label || 'Loading games…';
-			fill.style.width = '0%';
-			walker.style.left = '0%';
-			pct.textContent = '0%';
-			screen.classList.remove('done');
-
-			const LOAD_DURATION = 3500; // ms — simulated game loading time
-			const start = performance.now();
-
-			function frame(now) {
-				const elapsed = now - start;
-				const progress = Math.min((elapsed / LOAD_DURATION) * 100, 100);
-
-				fill.style.width = progress + '%';
-				walker.style.left = progress + '%';
-				pct.textContent = Math.round(progress) + '%';
-
-				if (elapsed < LOAD_DURATION) {
-					requestAnimationFrame(frame);
-				} else {
-					setTimeout(() => {
-						screen.classList.add('done');
-						if (onComplete) onComplete();
-					}, 350);
-				}
-			}
-			requestAnimationFrame(frame);
-		}
 	</script>
 </body>
 </html>
